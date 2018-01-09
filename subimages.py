@@ -8,8 +8,7 @@ from queue import Queue
 from tkinter import *
 from tkinter import ttk, filedialog, messagebox
 from PIL import Image, ImageChops
-from skimage.feature import match_template # requires numpy, scipy, and six
-
+from skimage.feature import match_template
 
 MAX_WIDTH = 640
 MAX_HEIGHT = 640
@@ -81,7 +80,7 @@ class FindSubset:
                     self.queue.put((i, j))
 
         self.results_table.grid_forget()  # clear previous results
-        print(self.results_table.get_children(''))
+
         for item in self.results_table.get_children(''):
             self.results_table.delete(item)
 
@@ -136,11 +135,12 @@ class FindSubset:
            
             # calculate the root-mean-square difference between orig_sub_img and sub_img
             h_diff = ImageChops.difference(orig_sub_img, temp_img).histogram()
+        
             sum_of_squares = sum(value * ((idx % 256) ** 2) for idx, value in enumerate(h_diff))
             rms = sqrt(sum_of_squares/float(temp_img.size[0]*temp_img.size[1]))
                        
             if RMS_THRESHOLD > rms: # add matches to table
-                self.results_table.grid(row = 3, column = 0, columnspan = 2, padx = 5, pady = 5)
+                self.results_table.grid(row = 3,column = 0, columnspan = 2, padx = 5, pady = 5)
                 self.results_table.insert('', 'end', str(self.progress_var.get()),text = pair[0])
                 self.results_table.set(str(self.progress_var.get()), 'subset', pair[1])
                 self.results_table.config(height = len(self.results_table.get_children('')))
@@ -156,6 +156,8 @@ class FindSubset:
             self.search_button.state(['!disabled'])             
             elapsed_time = time() - self.start_time
             self.status_var.set('Done - Elapsed Time: {0:.2f} seconds'.format(elapsed_time))
+
+
 def main():
     root = Tk()
     FindSubset(root)
